@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gestión de Proyectos con Apoyo de la IA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <style>
+        /* Reset box sizing */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+            color: #222;
+        }
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+        header {
+            background: #003366;
+            color: white;
+            padding: 10px 20px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        header h1 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 1.6rem;
+            user-select: none;
+        }
+        nav a {
+            color: white;
+            margin-left: 24px;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: color 0.3s;
+        }
+        nav a:hover,
+        nav a:focus {
+            color: #82b1ff;
+            outline: none;
+        }
+        nav {
+            display: flex;
+            align-items: center;
+        }
+        .hero {
+            background: url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=1470&amp;q=80') no-repeat center center/cover;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding: 20px;
+            margin-top: 60px; /* espacio para header fijo */
+            position: relative;
+        }
+        /* Overlay for readability */
+        .hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 0;
+            border-radius: 0 0 50px 50px;
+        }
+        .hero > * {
+            position: relative;
+            z-index: 1;
+        }
+        .hero h2 {
+            font-size: 2.8rem;
+            max-width: 900px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            text-shadow: 0 3px 6px rgba(0,0,0,0.6);
+        }
+        .cta-button {
+            background: #003366;
+            color: white;
+            padding: 15px 38px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+            user-select: none;
+        }
+        .cta-button:hover,
+        .cta-button:focus {
+            background-color: #0055cc;
+            outline: none;
+            transform: scale(1.05);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.4);
+        }
+        main {
+            max-width: 1200px;
+            margin: 30px auto 60px auto;
+            padding: 0 15px;
+        }
+        /* Beneficios */
+        .benefits {
+            display: grid;
+            grid-template-columns: repeat(auto-fit,minmax(230px,1fr));
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+        .benefit-card {
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            padding: 25px 20px 30px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: default;
+        }
+        .benefit-card:hover,
+        .benefit-card:focus-within {
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+            transform: translateY(-6px);
+            outline: none;
+        }
+        .benefit-icon {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 18px;
+            filter: drop-shadow(0 0 0.25rem rgba(0,0,0,0.1));
+        }
+        .benefit-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #003366;
+        }
+        .benefit-card p {
+            font-size: 1rem;
+            color: #333;
+            line-height: 1.4;
+        }
+        /* Testimonios estilo WhatsApp con "captura de celular" */
+        .testimonials {
+            background: #e9ecef;
+            border-radius: 16px;
+            padding: 40px 30px;
+            margin-bottom: 60px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.02);
+        }
+        .testimonials h2 {
+            text-align: center;
+            font-weight: 700;
+            font-size: 2.25rem;
+            color: #003366;
+            margin-bottom: 32px;
+        }
+        .whatsapp-chat {
+            max-width: 440px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f0f0f0;
+            border-radius: 30px;
+            box-shadow:
+                0 10px 20px rgba(0,0,0,0.1),
+                inset 0 1px 0 rgba(255,255,255,0.8);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: text;
+        }
+        .phone-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #075e54;
+            border-radius: 20px 20px 0 0;
+            padding: 10px 0;
+            position: relative;
+        }
+        .phone-speaker {
+            width: 60px;
+            height: 5px;
+            background: #0f9d58;
+            border-radius: 5px;
+            position: absolute;
+            top: 10px;
+        }
+        .phone-speaker.left {
+            left: 50px;
+        }
+        .phone-speaker.center {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .phone-speaker.right {
+            right: 50px;
+        }
+        .phone-camera {
+            width: 14px;
+            height: 14px;
+            background: #0f9d58;
+            border-radius: 50%;
+            position: absolute;
+            right: 24px;
+            top: 5px;
+            box-shadow: 0 0 5px #0f9d58;
+        }
+        .chat-message {
+            display: flex;
+            margin-top: 16px;
+        }
+        .avatar {
+            flex-shrink: 0;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 10px;
+            box-shadow: 0 0 0 2px white;
+            border: 1.5px solid #ccc;
+        }
+        /* Alternar lado izquierdo y derecho */
+        .chat-message.right {
+            flex-direction: row-reverse;
+        }
+        .chat-message.right .avatar {
+            margin-right: 0;
+            margin-left: 10px;
+        }
+        /* Burbuja */
+        .bubble {
+            max-width: 75%;
+            position: relative;
+            padding: 12px 16px;
+            border-radius: 15px;
+            font-size: 1rem;
+            line-height: 1.3;
+            color: #222;
+            display: inline-block;
+        }
+        /* Izquierda (mensaje entrante) */
+        .chat-message.left .bubble {
+            background: #dcf8c6; /* verde claro WhatsApp */
+            border-bottom-left-radius: 4px;
+            color: #000;
+        }
+        .chat-message.left .bubble::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -8px;
+            width: 0;
+            height: 0;
+            border-top: 10px solid #dcf8c6;
+            border-right: 8px solid transparent;
+        }
+        /* Derecha (mensaje enviado) */
+        .chat-message.right .bubble {
+            background: #25d366; /* verde WhatsApp */
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        .chat-message.right .bubble::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: -8px;
+            width: 0;
+            height: 0;
+            border-top: 10px solid #25d366;
+            border-left: 8px solid transparent;
+        }
+        .user-name {
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+            user-select: none;
+        }
+
+        /* Información del curso */
+        .course-info {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 0 15px;
+        }
+        .course-info h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #003366;
+            margin-bottom: 12px;
+        }
+        .price {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #d9534f;
+            margin-bottom: 10px;
+        }
+        .offer {
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: #222;
+        }
+        /* Formulario inscripción */
+        .signup-form {
+            background: #f9f9f9;
+            border-radius: 12px;
+            padding: 40px 30px 50px 30px;
+            max-width: 480px;
+            margin: 0 auto 60px auto;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+        }
+        .signup-form h2 {
+            font-weight: 700;
+            color: #003366;
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 28px;
+            user-select: none;
+        }
+        .signup-form label {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #222;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .signup-form input,
+        .signup-form select {
+            width: 100%;
+            padding: 12px 14px;
+            margin-bottom: 24px;
+            border-radius: 6px;
+            border: 1.8px solid #bbb;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            font-family: 'Roboto', sans-serif;
+        }
+        .signup-form input:focus,
+        .signup-form select:focus {
+            border-color: #003366;
+            outline: none;
+        }
+        .signup-form button {
+            width: 100%;
+            background-color: #003366;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+            padding: 14px 0;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.15s;
+            user-select: none;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        }
+        .signup-form button:hover,
+        .signup-form button:focus {
+            background-color: #0055cc;
+            transform: scale(1.05);
+            outline: none;
+            box-shadow: 0 9px 20px rgba(0,0,0,0.3);
+        }
+        /* FAQs */
+        .faq {
+            max-width: 900px;
+            margin: 0 auto 80px auto;
+            padding: 0 15px 40px 15px;
+            border-radius: 12px;
+            background: #f9f9f9;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+        .faq h2 {
+            text-align: center;
+            font-weight: 700;
+            font-size: 2rem;
+            color: #003366;
+            margin-bottom: 30px;
+            user-select: none;
+        }
+        .faq-item {
+            background: white;
+            padding: 20px 30px;
+            margin-bottom: 14px;
+            border-radius: 8px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+            font-size: 1rem;
+            line-height: 1.45;
+            color: #333;
+            cursor: default;
+            transition: background-color 0.25s;
+        }
+        .faq-item:hover,
+        .faq-item:focus {
+            background-color: #e4e9f0;
+            outline: none;
+        }
+        /* Botón material gratuito */
+        .material-section {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+        .material-section h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #003366;
+            margin-bottom: 24px;
+            user-select: none;
+        }
+        footer {
+            background: #003366;
+            color: white;
+            text-align: center;
+            padding: 25px 15px;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+        footer a {
+            color: #82b1ff;
+            text-decoration: none;
+            margin: 0 8px;
+            transition: color 0.3s;
+        }
+        footer a:hover,
+        footer a:focus {
+            color: #aad1ff;
+            outline: none;
+        }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h2 {
+                font-size: 2rem;
+            }
+            .benefits {
+                grid-template-columns: 1fr;
+                max-width: 320px;
+                margin: 0 auto 60px auto;
+            }
+            nav a {
+                margin-left: 15px;
+                font-size: 0.95rem;
+            }
+            .whatsapp-chat {
+                max-width: 95%;
+                margin: 0 auto 30px auto;
+            }
+            .course-info h2, .material-section h2, .signup-form h2, .faq h2 {
+                font-size: 1.7rem;
+            }
+        }
+        /* Visually hidden for accessibility */
+        .visually-hidden {
+            position: absolute !important;
+            height: 1px; width: 1px;
+            overflow: hidden;
+            clip: rect(1px,1px,1px,1px);
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Encabezado -->
+<header>
+    <h1>IA Project Master</h1>
+    <nav>
+        <a href="#inicio">Inicio</a>
+        <a href="#contenido">Contenido</a>
+        <a href="#testimonios">Testimonios</a>
+        <a href="#inscripcion">Inscripción</a>
+        <a href="#faqs">Preguntas Frecuentes</a>
+        <a href="#contacto">Contacto</a>
+    </nav>
+</header>
+
+<!-- Sección de portada -->
+<section class="hero" id="inicio" role="banner" aria-label="Portada del curso">
+    <h2>Domina la Gestión de Proyectos con Inteligencia Artificial</h2>
+    <button class="cta-button" type="button" aria-label="Botón para inscribirse ahora">Inscribirme ahora</button>
+</section>
+
+<main>
+    <!-- Beneficios del curso -->
+    <section class="benefits" id="contenido" aria-labelledby="beneficios-title">
+        <h2 id="beneficios-title" class="visually-hidden">Beneficios del curso</h2>
+        <article tabindex="0" class="benefit-card" aria-describedby="beneficio1-desc">
+            <img class="benefit-icon" src="https://cdn-icons-png.flaticon.com/512/3163/3163177.png" alt="Icono automatización" loading="lazy" />
+            <h3>Automatización de tareas</h3>
+            <p id="beneficio1-desc">Optimiza tu tiempo y recursos.</p>
+        </article>
+        <article tabindex="0" class="benefit-card" aria-describedby="beneficio2-desc">
+            <img class="benefit-icon" src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="Icono análisis predictivo" loading="lazy" />
+            <h3>Análisis predictivo</h3>
+            <p id="beneficio2-desc">Anticipa resultados y mejora decisiones.</p>
+        </article>
+        <article tabindex="0" class="benefit-card" aria-describedby="beneficio3-desc">
+            <img class="benefit-icon" src="https://cdn-icons-png.flaticon.com/512/3003/3003983.png" alt="Icono toma de decisiones" loading="lazy" />
+            <h3>Toma de decisiones asistida por IA</h3>
+            <p id="beneficio3-desc">Mejora la calidad de tus decisiones.</p>
+        </article>
+        <article tabindex="0" class="benefit-card" aria-describedby="beneficio4-desc">
+            <img class="benefit-icon" src="https://cdn-icons-png.flaticon.com/512/1256/1256650.png" alt="Icono herramientas inteligentes" loading="lazy" />
+            <h3>Herramientas inteligentes</h3>
+            <p id="beneficio4-desc">Utiliza las mejores herramientas para gestión de proyectos.</p>
+        </article>
+    </section>
+
+    <!-- Testimonios con estilo tipo captura WhatsApp -->
+    <section class="testimonials" id="testimonios" aria-labelledby="testimonios-title">
+        <h2 id="testimonios-title">Testimonios de Estudiantes</h2>
+        <div class="whatsapp-chat" role="list" aria-label="Chat de testimonios estilo WhatsApp">
+            <div class="phone-header" aria-hidden="true">
+                <div class="phone-speaker left"></div>
+                <div class="phone-speaker center"></div>
+                <div class="phone-speaker right"></div>
+                <div class="phone-camera"></div>
+            </div>
+            <!-- Mensaje izquierda -->
+            <article class="chat-message left" role="listitem" tabindex="0" aria-label="Mensaje de Juan Pérez">
+                <img class="avatar" src="https://randomuser.me/api/portraits/men/32.jpg" alt="Avatar de Juan Pérez" loading="lazy" />
+                <div>
+                    <div class="user-name">Juan Pérez</div>
+                    <div class="bubble">Este curso cambió mi forma de gestionar proyectos. ¡Altamente recomendado!</div>
+                </div>
+            </article>
+            <!-- Mensaje derecha -->
+            <article class="chat-message right" role="listitem" tabindex="0" aria-label="Mensaje de María López">
+                <img class="avatar" src="https://randomuser.me/api/portraits/women/65.jpg" alt="Avatar de María López" loading="lazy" />
+                <div>
+                    <div class="user-name">María López</div>
+                    <div class="bubble">La inteligencia artificial me ha ayudado a ser más eficiente y acertar en decisiones críticas.</div>
+                </div>
+            </article>
+            <!-- Mensaje izquierda -->
+            <article class="chat-message left" role="listitem" tabindex="0" aria-label="Mensaje de Carlos Fernández">
+                <img class="avatar" src="https://randomuser.me/api/portraits/men/54.jpg" alt="Avatar de Carlos Fernández" loading="lazy" />
+                <div>
+                    <div class="user-name">Carlos Fernández</div>
+                    <div class="bubble">Aprendí herramientas prácticas que impulsaron mis proyectos al siguiente nivel.</div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <!-- Información del curso -->
+    <section class="course-info" aria-labelledby="proximos-cursos-title">
+        <h2 id="proximos-cursos-title">Próximos Cursos</h2>
+        <p class="price" aria-label="Precio del curso doscientos dólares americanos">$200 USD</p>
+        <p class="offer" aria-live="polite" aria-atomic="true">¡Oferta temporal! Inscríbete ahora y obtén un 20% de descuento.</p>
+    </section>
+
+    <!-- Formulario de inscripción -->
+    <section class="signup-form" id="inscripcion" aria-labelledby="inscripcion-title">
+        <h2 id="inscripcion-title">Inscríbete al Curso</h2>
+        <form id="formInscripcion" novalidate>
+            <label for="nombre">Nombre completo</label>
+            <input id="nombre" name="nombre" type="text" placeholder="Nombre completo" required aria-required="true" />
+            
+            <label for="correo">Correo electrónico</label>
+            <input id="correo" name="correo" type="email" placeholder="Correo electrónico" required aria-required="true" />
+            
+            <label for="modalidad">Selecciona modalidad</label>
+            <select id="modalidad" name="modalidad" required aria-required="true">
+                <option value="" disabled selected>Selecciona modalidad</option>
+                <option value="virtual">Virtual</option>
+                <option value="presencial">Presencial</option>
+            </select>
+            <button class="cta-button" type="submit" aria-label="Botón para inscribirse al curso">Inscribirme al curso</button>
+        </form>
+        <p id="formMessage" role="alert" style="color: #d9534f; text-align:center; margin-top: 8px; font-weight:bold;"></p>
+    </section>
+
+    <!-- Preguntas Frecuentes -->
+    <section class="faq" id="faqs" aria-labelledby="faqs-title" tabindex="0">
+        <h2 id="faqs-title">Preguntas Frecuentes</h2>
+        <div class="faq-item">¿Cuál es la duración del curso? - 4 semanas.</div>
+        <div class="faq-item">¿Necesito conocimientos previos? - No, comenzamos desde cero.</div>
+        <div class="faq-item">¿Cuáles son los métodos de pago? - Aceptamos tarjetas y PayPal.</div>
+    </section>
+
+    <!-- Botón descarga material gratuito -->
+    <section class="material-section" aria-label="Descarga de material gratuito" tabindex="0">
+        <h2>Descarga Material Gratuito</h2>
+        <button class="cta-button" aria-label="Descargar material gratuito">Descargar</button>
+    </section>
+
+    <!-- Sección contacto para footer anclado -->
+    <section id="contacto" aria-label="Información de contacto" tabindex="0" style="max-width: 1200px; margin: 0 auto 60px auto; padding: 0 15px;">
+        <!-- Espacio para contacto si se quiere extender -->
+    </section>
+</main>
+
+<!-- Pie de página -->
+<footer>
+    <p>Contacto: <a href="mailto:info@iaprojectmaster.com">info@iaprojectmaster.com</a></p>
+    <p>
+        Síguenos en nuestras redes sociales<br />
+        <a href="#" aria-label="Ir a Facebook">Facebook</a> |
+        <a href="#" aria-label="Ir a Twitter">Twitter</a> |
+        <a href="#" aria-label="Ir a LinkedIn">LinkedIn</a>
+    </p>
+    <p>&copy; 2023 IA Project Master. Todos los derechos reservados.</p>
+    <p><small><a href="#" style="color:#82b1ff;" aria-label="Aviso Legal y Términos de Uso">Aviso legal y términos de uso</a></small></p>
+</footer>
+
+<script>
+    // Manejo sencillo de formulario
+    document.getElementById('formInscripcion').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const nombre = this.nombre.value.trim();
+        const correo = this.correo.value.trim();
+        const modalidad = this.modalidad.value;
+
+        const formMessage = document.getElementById('formMessage');
+        formMessage.style.color = '#d9534f';
+        formMessage.textContent = '';
+
+        if (!nombre) {
+            formMessage.textContent = 'Por favor ingresa tu nombre completo.';
+            this.nombre.focus();
+            return;
+        }
+        if (!correo || !/\S+@\S+\.\S+/.test(correo)) {
+            formMessage.textContent = 'Por favor ingresa un correo electrónico válido.';
+            this.correo.focus();
+            return;
+        }
+        if (!modalidad) {
+            formMessage.textContent = 'Por favor selecciona una modalidad.';
+            this.modalidad.focus();
+            return;
+        }
+
+        // Simular envío exitoso
+        formMessage.style.color = '#28a745';
+        formMessage.textContent = '¡Gracias por inscribirte! Nos pondremos en contacto contigo pronto.';
+        this.reset();
+    });
+</script>
+
+</body>
+</html>
+
